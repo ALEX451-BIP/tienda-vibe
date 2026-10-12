@@ -1,0 +1,17 @@
+# Configuracion real (NUNCA subir)
+.env
+js/env.js
+
+# Claves de servicio de Firebase (Admin SDK). NUNCA al repo.
+*serviceAccount*.json
+*service-account*.json
+*-adminsdk-*.json
+
+# Ruido de sistema
+Thumbs.db
+desktop.ini
+*.log
+
+# Basura de QA / backups (no publicar)
+_qa/
+*.bak_*

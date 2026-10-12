@@ -1,0 +1,139 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+
+    "admins": {
+      ".read": "auth != null",
+      "$uid": {
+        ".write": false,
+        ".validate": false
+      }
+    },
+
+    "settings": {
+      ".read": true,
+      ".write": "auth != null && root.child('admins').child(auth.uid).val() === true"
+    },
+
+    "categories": {
+      ".read": true,
+      ".write": "auth != null && root.child('admins').child(auth.uid).val() === true",
+      "$cid": {
+        ".validate": "newData.hasChildren(['name','slug'])"
+      }
+    },
+
+    "products": {
+      ".read": true,
+      ".write": "auth != null && root.child('admins').child(auth.uid).val() === true",
+      "$pid": {
+        ".validate": "newData.hasChildren(['name','price','stock','active']) && newData.child('price').isNumber() && newData.child('stock').isNumber() && newData.child('stock').val() >= 0"
+      }
+    },
+
+    "rewards": {
+      ".read": true,
+      ".write": "auth != null && root.child('admins').child(auth.uid).val() === true",
+      "$rid": {
+        ".validate": "newData.hasChildren(['name','cost','stock','active']) && newData.child('cost').isNumber() && newData.child('cost').val() > 0 && newData.child('stock').val() >= 0"
+      }
+    },
+
+    "tasks": {
+      ".read": true,
+      ".write": "auth != null && root.child('admins').child(auth.uid).val() === true"
+    },
+
+    "users": {
+      ".read": "auth != null && root.child('admins').child(auth.uid).val() === true",
+      ".indexOn": ["email"],
+      "$uid": {
+        ".read": "auth != null && (auth.uid === $uid || root.child('admins').child(auth.uid).val() === true)",
+        ".write": "auth != null && auth.uid === $uid",
+        ".validate": "newData.hasChildren(['nombre']) && !newData.hasChild('role') && !newData.hasChild('admin')"
+      }
+    },
+
+    "userOrders": {
+      "$uid": {
+        ".read": "auth != null && (auth.uid === $uid || root.child('admins').child(auth.uid).val() === true)",
+        ".write": "auth != null && auth.uid === $uid"
+      }
+    },
+
+    "userRedemptions": {
+      "$uid": {
+        ".read": "auth != null && (auth.uid === $uid || root.child('admins').child(auth.uid).val() === true)",
+        ".write": "auth != null && auth.uid === $uid"
+      }
+    },
+
+    "orders": {
+      ".read": "auth != null && root.child('admins').child(auth.uid).val() === true",
+      ".indexOn": ["uid", "estado", "payStatus", "creadoEn"],
+      "$oid": {
+        ".read": "auth != null && (data.child('uid').val() === auth.uid || root.child('admins').child(auth.uid).val() === true)",
+        ".write": "(data.exists() === false && ((auth != null && newData.child('uid').val() === auth.uid) || (auth === null && newData.child('uid').val() === ''))) || (auth != null && root.child('admins').child(auth.uid).val() === true)",
+        ".validate": "newData.hasChildren(['uid','items','total','estado','payStatus','creadoEn']) && newData.child('total').isNumber() && newData.child('total').val() >= 0",
+        "uid": { ".validate": "data.exists() === false || newData.val() === data.val() || (auth != null && root.child('admins').child(auth.uid).val() === true)" },
+        "items": { ".write": "data.exists() === false || (auth != null && root.child('admins').child(auth.uid).val() === true)" },
+        "subtotal": { ".write": "data.exists() === false || (auth != null && root.child('admins').child(auth.uid).val() === true)" },
+        "envio": { ".write": "data.exists() === false || (auth != null && root.child('admins').child(auth.uid).val() === true)" },
+        "total": { ".write": "data.exists() === false || (auth != null && root.child('admins').child(auth.uid).val() === true)" },
+        "puntosGanados": { ".write": "data.exists() === false || (auth != null && root.child('admins').child(auth.uid).val() === true)" },
+        "estado": {
+          ".validate": "newData.isString() && (newData.val() === data.val() || newData.val() === 'pendiente_pago' || (auth != null && root.child('admins').child(auth.uid).val() === true))"
+        },
+        "payStatus": {
+          ".validate": "newData.isString() && (newData.val() === data.val() || newData.val() === 'pendiente' || newData.val() === 'informado' || (newData.val() === 'confirmado' && auth != null && root.child('admins').child(auth.uid).val() === true))"
+        },
+        "pointsCredited": {
+          ".write": "auth != null && root.child('admins').child(auth.uid).val() === true"
+        }
+      }
+    },
+
+    "pointsLots": {
+      ".read": "auth != null && root.child('admins').child(auth.uid).val() === true",
+      "$uid": {
+        ".read": "auth != null && (auth.uid === $uid || root.child('admins').child(auth.uid).val() === true)",
+        ".write": "auth != null && root.child('admins').child(auth.uid).val() === true",
+        "$lotId": {
+          ".validate": "newData.hasChildren(['remaining','expiresAt']) && newData.child('remaining').isNumber() && newData.child('remaining').val() >= 0"
+        }
+      }
+    },
+
+    "pointsLedger": {
+      ".read": "auth != null && root.child('admins').child(auth.uid).val() === true",
+      "$uid": {
+        ".read": "auth != null && (auth.uid === $uid || root.child('admins').child(auth.uid).val() === true)",
+        ".write": "auth != null && root.child('admins').child(auth.uid).val() === true",
+        "$entryId": {
+          ".validate": "newData.hasChildren(['puntos','fecha']) && newData.child('puntos').isNumber() && !data.exists()"
+        }
+      }
+    },
+
+    "redemptions": {
+      ".read": "auth != null && root.child('admins').child(auth.uid).val() === true",
+      ".indexOn": ["uid", "status"],
+      "$rid": {
+        ".read": "auth != null && (data.child('uid').val() === auth.uid || root.child('admins').child(auth.uid).val() === true)",
+        ".write": "auth != null && ((!data.exists() && newData.child('uid').val() === auth.uid && newData.child('status').val() === 'solicitado') || root.child('admins').child(auth.uid).val() === true)",
+        ".validate": "newData.hasChildren(['uid','rewardId','costo','status']) && newData.child('costo').isNumber() && newData.child('costo').val() > 0",
+        "uid": { ".validate": "data.exists() === false || newData.val() === data.val() || (auth != null && root.child('admins').child(auth.uid).val() === true)" },
+        "status": {
+          ".validate": "newData.val() === data.val() || newData.val() === 'solicitado' || (auth != null && root.child('admins').child(auth.uid).val() === true)"
+        }
+      }
+    },
+
+    "adminLog": {
+      ".read": "auth != null && root.child('admins').child(auth.uid).val() === true",
+      ".write": "auth != null && root.child('admins').child(auth.uid).val() === true",
+      "$eid": { ".validate": "!data.exists()" }
+    }
+  }
+}

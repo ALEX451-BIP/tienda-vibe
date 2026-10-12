@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#FAFAF8">
+<title>Vibe</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- ============ HEADER ============ -->
+<div class="top">
+  <div class="contenedor">
+    <div class="fila">
+      <div class="marca">
+        <div class="logo" id="marcaLogo">V</div>
+        <h1 id="marcaNombre">Vibe</h1>
+      </div>
+      <div class="buscador">
+        <input id="buscar" type="search" placeholder="Buscar producto..." autocomplete="off">
+      </div>
+      <button class="btn-carrito" id="btnCuenta">Ingresar</button>
+      <button class="btn-carrito" id="btnCarrito" aria-label="Ver carrito">
+        Carrito<span class="pill oculto" id="pillCant">0</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- aviso de modo de ejemplo / falta de configuracion -->
+<div class="banda" id="bandaDemo" style="display:none">
+  <div class="contenedor">
+    <b>Modo de ejemplo.</b> El catalogo y los pedidos se guardan solo en este navegador.
+    Para conectar la base real: copiar <code>.env.example</code> a <code>.env</code>, completar los datos de Firebase y correr <code>python generar_env.py</code>.
+  </div>
+</div>
+
+<main class="contenedor">
+
+  <!-- hero carrusel (estetica AIMARA) -->
+  <section class="hero" id="heroSection">
+    <div class="hero-slides" id="heroSlides"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">Puntos y canjes · Tienda online</p>
+      <h1 class="hero-title">Comprá, sumá puntos,<br>canjeá lo que quieras</h1>
+      <p class="hero-desc">Cada compra suma puntos que podés canjear por productos. Sumás sin pensarlo y canjeás cuando querés.</p>
+      <button class="hero-cta" id="heroShopBtn">
+        Ver productos
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+    <div class="hero-controls">
+      <div class="hero-prev" id="heroPrev">&#8249;</div>
+      <div class="hero-next" id="heroNext">&#8250;</div>
+    </div>
+    <div class="hero-dots" id="heroDots"></div>
+  </section>
+
+  <!-- panel de puntos y pedidos del cliente logueado -->
+  <section class="panel-puntos" id="panelPuntos" style="display:none">
+    <h2>Mis puntos</h2>
+    <div class="saldo"><span id="saldoPuntos">0</span> <small>puntos vigentes</small></div>
+    <p class="aviso">Los puntos vencen a los 6 meses de acreditados. Se usan por orden de vencimiento.</p>
+    <div class="items" id="misMovimientos"></div>
+  </section>
+
+  <!-- recompensas -->
+  <section>
+    <h2 class="titulo">Recompensas</h2>
+    <div class="grilla" id="grillaRecompensas"></div>
+  </section>
+
+  <!-- catalogo -->
+  <section>
+    <h2 class="titulo">Productos</h2>
+    <div class="cats" id="cats"></div>
+    <div class="grilla" id="grilla"></div>
+  </section>
+
+</main>
+
+<footer class="pie-pagina">
+  <div class="contenedor">
+    <p>Precios y stock sujetos a confirmacion. El pago se confirma al recibir el pedido.</p>
+    <p>Ante cualquier duda, escribinos por WhatsApp.</p>
+    <p class="acciones-pie"><a class="btn-admin" href="admin.html">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Admin</a></p>
+  </div>
+</footer>
+
+<!-- ============ CARRITO ============ -->
+<div class="velo" id="velo"></div>
+<aside class="drawer" id="drawer" aria-label="Carrito">
+  <header>
+    <h2>Tu carrito</h2>
+    <button class="cerrar" id="cerrarCarrito" aria-label="Cerrar">&times;</button>
+  </header>
+  <div class="items" id="itemsCarrito"></div>
+  <footer>
+    <div class="total"><span>Total</span><span id="carritoTotal">$0</span></div>
+    <button class="btn-principal" id="btnFinalizar">Finalizar pedido</button>
+  </footer>
+</aside>
+
+<!-- ============ MODAL ============ -->
+<div class="modal" id="modal"><div class="caja" id="modalCaja"></div></div>
+
+<div class="toast" id="toast"></div>
+
+<!-- env.js lo genera generar_env.py; si no existe, la tienda corre en modo ejemplo -->
+<script src="js/env.js" onerror="window.__ENV=window.__ENV||{}"></script>
+<script src="js/config.js"></script>
+<script src="js/store.js"></script>
+<script src="js/hero_slides.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
