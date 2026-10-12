@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0E2A47">
+<meta name="robots" content="noindex">
+<title>Vibe · Panel</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- ============ HEADER ============ -->
+<div class="top">
+  <div class="contenedor">
+    <div class="fila">
+      <div class="marca">
+        <div class="logo" id="marcaLogo">V</div>
+        <h1 id="marcaNombre">Vibe · Panel</h1>
+      </div>
+      <a class="btn-carrito" href="index.html">Ver tienda</a>
+      <button class="btn-carrito" id="btnSalir">Salir</button>
+    </div>
+  </div>
+</div>
+
+<!-- aviso de modo de ejemplo -->
+<div class="banda" id="bandaDemo" style="display:none">
+  <div class="contenedor">
+    <b>Modo de ejemplo.</b> No hay Firebase configurado: los datos viven solo en este navegador.
+    Contraseña del panel: <code>vibe</code>.
+  </div>
+</div>
+
+<main class="contenedor">
+
+  <!-- ============ PUERTA (login / sin permiso) ============ -->
+  <div id="puerta" class="panel-puntos" style="display:none">
+    <h2>Acceso del administrador</h2>
+    <div id="puertaLogin">
+      <div id="loginDemo" style="display:none">
+        <p class="aviso">Escribí la contraseña del panel para entrar.</p>
+        <div class="campo">
+          <label for="aPassDemo">Contraseña</label>
+          <input id="aPassDemo" type="password" autocomplete="current-password" placeholder="••••••••">
+        </div>
+        <button class="btn-principal" id="btnEntrarDemo">Ingresar</button>
+      </div>
+      <div id="loginFb" style="display:none">
+        <p class="aviso">Ingresá con la cuenta que figura en <code>/admins</code> de la base.</p>
+        <div class="campo">
+          <label for="aEmail">Email</label>
+          <input id="aEmail" type="email" autocomplete="username" placeholder="tu@email.com">
+        </div>
+        <div class="campo">
+          <label for="aPass">Contraseña</label>
+          <input id="aPass" type="password" autocomplete="current-password" placeholder="••••••••">
+        </div>
+        <button class="btn-principal" id="btnEntrarAdmin">Ingresar</button>
+      </div>
+    </div>
+    <div id="puertaDenegado" style="display:none">
+      <p><b>Esta cuenta no tiene permisos de administrador.</b></p>
+      <p class="aviso">Para habilitarla, agregá <code>/admins/&lt;uid&gt; = true</code> en la base (Firebase → Realtime Database → Datos). El uid de esta sesión se muestra abajo.</p>
+      <p class="aviso">UID actual: <code id="uidActual">—</code></p>
+      <button class="btn-mini" id="btnSalirDenegado">Cerrar sesión</button>
+    </div>
+  </div>
+
+  <!-- ============ PANEL ============ -->
+  <div id="panel" style="display:none">
+    <div class="tabs" id="tabs">
+      <button class="tab on" data-tab="pedidos">Pedidos</button>
+      <button class="tab" data-tab="productos">Productos</button>
+      <button class="tab" data-tab="recompensas">Recompensas</button>
+      <button class="tab" data-tab="canjes">Canjes</button>
+      <button class="tab" data-tab="puntos">Puntos</button>
+      <button class="tab" data-tab="inicio">Inicio</button>
+    </div>
+
+    <!-- ---- Inicio (imágenes del carrusel) ---- -->
+    <section class="vista" id="v-inicio">
+      <div class="form-admin">
+        <h3>Imágenes del inicio</h3>
+        <p class="aviso">Son las fotos grandes que se ven arriba en la tienda. Se guardan en orden; la primera es la primera que se ve. Si no hay ninguna, la tienda usa las imágenes por defecto.</p>
+        <div class="drop" id="heroDrop" tabindex="0" role="button" aria-label="Agregar imágenes al inicio">
+          <div class="drop-txt" id="heroDropTxt">Arrastrá una o varias fotos acá, o hacé clic para elegirlas</div>
+          <input type="file" id="heroFile" accept="image/*" multiple style="display:none">
+        </div>
+        <div id="heroGaleria"></div>
+      </div>
+    </section>
+
+    <!-- ---- Pedidos ---- -->
+    <section class="vista on" id="v-pedidos">
+      <p class="aviso">Confirmá el pago cuando el dinero esté acreditado: ahí se cargan los puntos UNA sola vez.</p>
+      <div id="listaPedidos"></div>
+    </section>
+
+    <!-- ---- Productos ---- -->
+    <section class="vista" id="v-productos">
+      <div class="form-admin">
+        <h3 id="tituloFormProd">Nuevo producto</h3>
+        <input type="hidden" id="pId">
+        <div class="campo"><label for="pNombre">Nombre</label><input id="pNombre" type="text" placeholder="Producto"></div>
+        <div class="form-fila">
+          <div class="campo"><label for="pPrecio">Precio</label><input id="pPrecio" type="number" min="0" step="1" placeholder="0"></div>
+          <div class="campo"><label for="pStock">Stock</label><input id="pStock" type="number" min="0" step="1" placeholder="0"></div>
+          <div class="campo"><label for="pPts">Puntos por unidad</label><input id="pPts" type="number" min="0" step="1" placeholder="0"></div>
+        </div>
+        <div class="campo"><label for="pCat">Categoría</label><select id="pCat"></select></div>
+        <div class="campo">
+          <label>Administrar categorías</label>
+          <div class="form-fila">
+            <input id="nuevaCat" type="text" placeholder="Nombre de la categoría nueva" style="flex:1">
+            <button type="button" class="btn-mini" id="btnNuevaCat">Agregar</button>
+          </div>
+          <div id="listaCats" class="equipo" style="margin-top:8px"></div>
+        </div>
+        <div class="campo"><label for="pDesc">Descripción</label><textarea id="pDesc" rows="2" placeholder="Descripción breve"></textarea></div>
+        <div class="campo">
+          <label>Foto del producto</label>
+          <div class="drop" id="pDrop" tabindex="0" role="button" aria-label="Agregar foto del producto">
+            <img id="pPrev" class="drop-prev" alt="" style="display:none">
+            <div class="drop-txt" id="pDropTxt">Arrastrá una foto acá, o hacé clic para elegirla</div>
+            <input type="file" id="pFile" accept="image/*" style="display:none">
+          </div>
+          <input id="pImg" type="text" placeholder="…o pegá una URL (https://...)" style="margin-top:8px">
+          <button type="button" class="btn-mini" id="pQuitar" style="display:none;margin-top:8px">Quitar foto</button>
+        </div>
+        <div class="check"><input id="pActivo" type="checkbox" checked><label for="pActivo">Visible en la tienda</label></div>
+        <button class="btn-principal" id="btnGuardarProd">Guardar producto</button>
+        <button class="btn-mini" id="btnNuevoProd" style="margin-top:8px">Limpiar formulario</button>
+      </div>
+      <div id="listaProductos"></div>
+    </section>
+
+    <!-- ---- Recompensas ---- -->
+    <section class="vista" id="v-recompensas">
+      <div class="form-admin">
+        <h3 id="tituloFormRec">Nueva recompensa</h3>
+        <input type="hidden" id="rId">
+        <div class="campo"><label for="rNombre">Nombre</label><input id="rNombre" type="text" placeholder="Recompensa"></div>
+        <div class="form-fila">
+          <div class="campo"><label for="rCosto">Costo en puntos</label><input id="rCosto" type="number" min="1" step="1" placeholder="100"></div>
+          <div class="campo"><label for="rStock">Stock</label><input id="rStock" type="number" min="0" step="1" placeholder="0"></div>
+        </div>
+        <div class="campo"><label for="rDesc">Descripción</label><textarea id="rDesc" rows="2" placeholder="Descripción breve"></textarea></div>
+        <div class="campo">
+          <label>Foto de la recompensa</label>
+          <div class="drop" id="rDrop" tabindex="0" role="button" aria-label="Agregar foto de la recompensa">
+            <img id="rPrev" class="drop-prev" alt="" style="display:none">
+            <div class="drop-txt" id="rDropTxt">Arrastrá una foto acá, o hacé clic para elegirla</div>
+            <input type="file" id="rFile" accept="image/*" style="display:none">
+          </div>
+          <input id="rImg" type="text" placeholder="…o pegá una URL (https://...)" style="margin-top:8px">
+          <button type="button" class="btn-mini" id="rQuitar" style="display:none;margin-top:8px">Quitar foto</button>
+        </div>
+        <div class="check"><input id="rActivo" type="checkbox" checked><label for="rActivo">Disponible</label></div>
+        <button class="btn-principal" id="btnGuardarRec">Guardar recompensa</button>
+        <button class="btn-mini" id="btnNuevaRec" style="margin-top:8px">Limpiar formulario</button>
+      </div>
+      <div id="listaRecompensas"></div>
+    </section>
+
+    <!-- ---- Canjes ---- -->
+    <section class="vista" id="v-canjes">
+      <p class="aviso">Al aprobar un canje se descuentan los puntos del cliente (por orden de vencimiento).</p>
+      <div id="listaCanjes"></div>
+    </section>
+
+    <!-- ---- Puntos ---- -->
+    <section class="vista" id="v-puntos">
+      <div class="form-admin">
+        <h3>Cargar puntos a mano</h3>
+        <div class="campo"><label for="ptEmail">Email del cliente</label><input id="ptEmail" type="email" placeholder="cliente@email.com"></div>
+        <div class="form-fila">
+          <div class="campo"><label for="ptPuntos">Puntos</label><input id="ptPuntos" type="number" step="1" placeholder="50"></div>
+          <div class="campo"><label for="ptMotivo">Motivo</label><input id="ptMotivo" type="text" placeholder="Compra en el local"></div>
+        </div>
+        <button class="btn-principal" id="btnCargarPuntos">Cargar puntos</button>
+        <p class="aviso">Los puntos se acreditan con vencimiento a 6 meses. Usá puntos negativos para corregir un error.</p>
+      </div>
+      <div class="form-admin">
+        <h3>Vencimientos</h3>
+        <p class="aviso">El saldo vigente se calcula solo (se ignoran los lotes vencidos). Este botón deja registrado el vencimiento en el historial del cliente.</p>
+        <button class="btn-mini" id="btnVencimientos">Procesar vencimientos de hoy</button>
+      </div>
+    </section>
+
+  </div>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script src="js/env.js" onerror="window.__ENV=window.__ENV||{}"></script>
+<script src="js/config.js"></script>
+<script src="js/store.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>
